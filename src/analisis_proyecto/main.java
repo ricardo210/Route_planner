@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -90,7 +91,7 @@ public class main extends javax.swing.JFrame {
     private void selec_archiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selec_archiveActionPerformed
         // TODO add your handling code here:
         JFileChooser jFileChooser = new JFileChooser();
-        jFileChooser.setCurrentDirectory(new File("/User/downloads"));
+        jFileChooser.setCurrentDirectory(new File("./"));
         int result = jFileChooser.showOpenDialog(new JFrame());
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jFileChooser.getSelectedFile();
@@ -152,11 +153,11 @@ public class main extends javax.swing.JFrame {
 
     private void generar_archiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generar_archiveActionPerformed
         // TODO add your handling code here:
-        texto.setText("   ");
+        texto.setText("");
         matriz = new double[x.size()][x.size()];
-        calcularDistanciaCamion();
             crearMatriz();
-        calcularDistancia();
+            calcularRuta();
+            crearArchivo();
         
         
         
@@ -209,18 +210,18 @@ public class main extends javax.swing.JFrame {
     static int camiones = 0;
     static List<Double> x = new ArrayList();
     static List<Double> y = new ArrayList();                
-    static List<Double> distancias = new ArrayList();
+    static List<Double> Rutas = new ArrayList();
     static List<Double> distanciasCamiones = new ArrayList();
     static double [][] matriz ;
     
     
     
- public  void calcularDistancia(){
-       double distancia = 0;
-        for (int i = 1; i < x.size(); i++) {
-            distancia = Math.sqrt(Math.pow(x.get(i)-x.get(0),2) + Math.pow(y.get(i)-y.get(0), 2));
-            distancias.add(distancia);
-            texto.append("Ruta #"+i+": "+distancia+"\n");
+ public  void calcularRuta(){
+       double Ruta = 0;
+        for (int i = 1; i < camiones+1; i++) {
+            Ruta = Math.sqrt(Math.pow(x.get(i)-x.get(0),2) + Math.pow(y.get(i)-y.get(0), 2));
+            Rutas.add(Ruta);
+            texto.append("Ruta #"+i+": "+Ruta+"\n");
         }
     }
 
@@ -235,13 +236,20 @@ public class main extends javax.swing.JFrame {
             }
         }
     }
-    
-    public static double calcularDistanciaCamion(){
-        double result = 0;
-        for (int i = 0; i < distancias.size(); i++) {
-            result+= distancias.get(i);
-        }
-        return result/camiones;
+    public  void crearArchivo(){
+      try {
+            File file = new File("./salida.txt");
+            file.createNewFile();
+            FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
+            try (BufferedWriter bufferWriter = new BufferedWriter(fileWriter)) {
+                String salida = texto.getText();
+                bufferWriter.write(salida);
+                bufferWriter.flush();
+            }
+            JOptionPane.showMessageDialog(this, "archivo creado", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException e) {
+        }    
     }
 }
 
